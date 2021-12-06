@@ -1,0 +1,67 @@
+Answer following questions
+1.	What is View? What are the benefits of using views?
+Views can represent a subset of the data contained in a table. Views are used for security purpose in databases,views restricts the user from viewing certain column and rows means by using view we can apply the restriction on accessing the particular rows and columns for specific user.
+2.	Can data be modified through views?
+Nope
+3.	What is stored procedure and what are the benefits of using it?
+By grouping SQL statements, a stored procedure allows them to be executed with a single call.
+4.	What is the difference between view and stored procedure?
+Stored procedure accept parameters where view does not.
+5.	What is the difference between stored procedure and functions?
+Stored procedures in SQL are easier to create and functions have a more rigid structure and support less clauses and functionality.
+6.	Can stored procedure return multiple result sets?
+No 
+7.	Can stored procedure be executed as part of SELECT Statement? Why?
+No.
+8.	What is Trigger? What types of Triggers are there?
+A trigger is a special type of stored procedure in database that automatically invokes/runs/fires when an event occurs in the database server.
+DDL Trigger
+DML Trigger
+Logon Trigger
+9.	What is the difference between Trigger and Stored Procedure?
+Trigger is a stored procedure that runs automatically when various events happen
+
+--Write queries for following scenarios
+--Use Northwind database. All questions are based on assumptions described by the Database Diagram sent to you yesterday. When inserting, make up info if necessary. Write query for each step. Do not use IDE. BE CAREFUL WHEN DELETING DATA OR DROPPING TABLE.
+--1.	Create a view named “view_product_order_[your_last_name]”, list all products and total ordered quantity for that product.
+create view view_product_order_xinyu as select p.productName, count(o.quantity) QuantityCount from products p join [Order Details] as o on o.ProductID = p.ProductID group by p.ProductName
+--2.	Create a stored procedure “sp_product_order_quantity_[your_last_name]” that accept product id as an input and total quantities of order as output parameter.
+alter proc spProductOrderQuant2
+@id int,
+@total int out
+as 
+begin
+ select @id = view_product_quantity_order_xinyu.ProductID,@total = 
+view_product_quantity_order_Yang.QuantityCount from 
+view_product_quantity_order_Yang
+where view_product_quantity_order_Yang.ProductID = @id
+end
+
+declare @id int, @total int
+exec spProductOrderQuant2 2, @total out
+print @total
+--3.	Create a stored procedure “sp_product_order_city_[your_last_name]” that accept product name as an input and top 5 cities that ordered most that product combined with the total quantity of that product ordered from that city as output.
+
+--4.	Create 2 new tables “people_your_last_name” “city_your_last_name”. City table has two records: {Id:1, City: Seattle}, {Id:2, City: Green Bay}. People has three records: {id:1, Name: Aaron Rodgers, City: 2}, {id:2, Name: Russell Wilson, City:1}, {Id: 3, Name: Jody Nelson, City:2}. Remove city of Seattle. If there was anyone from Seattle, put them into a new city “Madison”. Create a view “Packers_your_name” lists all people from Green Bay. If any error occurred, no changes should be made to DB. (after test) Drop both tables and view.
+create table people_xinyu(id int,name char(20),cityid int)
+create table city_xinyu(cityid int,city char(20))
+insert into people_xinyu(id,name,cityid)values(1,'Aaron Rodgers',2)
+insert into people_xinyu(id,name,cityid)values(2,'Russell Wilson',1)
+insert into people_xinyu(id,name,cityid)values(3,'Jody Nelson',2)
+insert into city_xinyu(cityid,city)values(1,'Settle')
+insert into city_xinyu(cityid,city)values(2,'Green Bay')
+create view Packers_xinyu_zhang as
+select p.id, p.name from people_xinyu p inner join city_xinyu c on p.cityid=c.cityid 
+where c.city='Green bay'
+begin tran 
+rollback 
+drop table people_xinyu
+drop table city_xinyu
+drop view Packers_xinyu_zhang
+
+--5.	 Create a stored procedure “sp_birthday_employees_[you_last_name]” that creates a new table “birthday_employees_your_last_name” and fill it with all employees that have a birthday on Feb. (Make a screen shot) drop the table. Employee table should not be affected.
+
+--6.	How do you make sure two tables have the same data?
+--I will store the total data number for both table and do the union, and check, if the 
+--number of data for two table is not the same number of data with union table, then they
+--do not have same data.
